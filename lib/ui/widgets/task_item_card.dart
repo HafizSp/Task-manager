@@ -25,6 +25,20 @@ class TaskItemCard extends StatefulWidget {
 }
 
 class _TaskItemCardState extends State<TaskItemCard> {
+  Future<void> deleteTask() async {
+    widget.showProgress(true);
+    widget.countSummaryProgress(true);
+    setState(() {});
+    final response = await NetworkCaller()
+        .getRequest(Urls.deleteTask(widget.task.sId ?? ''));
+    if (response.isSuccess) {
+      widget.onChangeStatus;
+    }
+    widget.showProgress(false);
+    widget.countSummaryProgress(false);
+    setState(() {});
+  }
+
   Future<void> updateTaskStatus(String status) async {
     widget.showProgress(true);
     widget.countSummaryProgress(true);
@@ -66,7 +80,7 @@ class _TaskItemCardState extends State<TaskItemCard> {
                 Wrap(
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: deleteTask,
                       icon: const Icon(Icons.delete_outline),
                     ),
                     IconButton(

@@ -6,6 +6,8 @@ class Urls {
   static const String login = "$_baseUrl/login";
   static const String createTask = "$_baseUrl/createTask";
 
+  static const String updateProfile = "$_baseUrl/profileUpdate";
+
   static String getNewTasks =
       "$_baseUrl/listTaskByStatus/${TaskStatus.New.name}";
 
@@ -22,4 +24,6 @@ class Urls {
 
   static String updateTaskStatus(String taskId, String status) =>
       "$_baseUrl/updateTaskStatus/$taskId/$status";
+
+  static String deleteTask(String taskId) => "$_baseUrl/deleteTask/$taskId";
 }

@@ -69,6 +69,7 @@ class NetworkCaller {
           'token': AuthController.token.toString(),
         },
       );
+      log(AuthController.token.toString());
       log(response.body.toString());
       log(response.headers.toString());
       log(response.statusCode.toString());
