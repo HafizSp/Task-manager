@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task_manager/data/models/user_model.dart';
 import 'package:task_manager/data/network/network_caller.dart';
 import 'package:task_manager/data/network/network_response.dart';
+import 'package:task_manager/ui/controllers/auth_controller.dart';
 import 'package:task_manager/ui/screens/forgot_password_screen.dart';
 import 'package:task_manager/ui/screens/sign_up_screen.dart';
 import 'package:task_manager/ui/widgets/body_background.dart';
@@ -156,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
         "email": _emailTEController.text.trim(),
         "password": _passwordTEController.text
       },
+      isLogin: true,
     );
     loginProgress = false;
     if (mounted) {
@@ -163,8 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (response.isSuccess) {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.setString('token', response.jsonResponse['token']);
+      AuthController.saveUserInformation(response.jsonResponse['token'],
+          UserModel.fromJson(response.jsonResponse['data']));
       if (mounted) {
         Navigator.push(
           context,

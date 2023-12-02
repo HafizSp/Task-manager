@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/ui/screens/cancelled_tasks_screen.dart';
 import 'package:task_manager/ui/screens/completed_tasks_screen.dart';
-import 'package:task_manager/ui/screens/in_progress_tasks_screen.dart';
+import 'package:task_manager/ui/screens/progress_tasks_screen.dart';
 import 'package:task_manager/ui/screens/new_tasks_screen.dart';
 
 class MainBottomNavScreen extends StatefulWidget {
@@ -40,7 +40,7 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.incomplete_circle_outlined),
-            label: "In progress",
+            label: "Progress",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.done_all_outlined),

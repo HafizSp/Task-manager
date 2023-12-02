@@ -24,8 +24,7 @@ class AuthController {
 
   static Future<bool> checkAuthState() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    token = preferences.getString('token');
-    if (token != null) {
+    if (preferences.containsKey('token')) {
       initializeUserCache();
       return true;
     }
@@ -35,5 +34,6 @@ class AuthController {
   static Future<void> clearAuthData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
+    token = null;
   }
 }
