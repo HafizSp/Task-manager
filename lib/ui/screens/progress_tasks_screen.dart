@@ -71,6 +71,9 @@ class _InProgressTasksScreenState extends State<InProgressTasksScreen> {
                         }
                       },
                       countSummaryProgress: (countProgress) {},
+                      onDelete: () {
+                        getProgressTaskList();
+                      },
                     ),
                     itemCount: taskListModel.taskList?.length ?? 0,
                   ),

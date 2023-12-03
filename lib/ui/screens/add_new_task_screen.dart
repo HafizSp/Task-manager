@@ -8,7 +8,9 @@ import 'package:task_manager/ui/widgets/snack_message.dart';
 import '../../data/utility/urls.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
-  const AddNewTaskScreen({super.key});
+  const AddNewTaskScreen({super.key, required this.onAddTask});
+
+  final VoidCallback onAddTask;
 
   @override
   State<AddNewTaskScreen> createState() => _AddNewTaskScreenState();
@@ -116,6 +118,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
     }
 
     if (response.isSuccess) {
+      widget.onAddTask();
       _titleTEController.clear();
       _descriptionTEController.clear();
       if (mounted) {

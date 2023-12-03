@@ -61,17 +61,21 @@ class _CancelledTasksScreenState extends State<CancelledTasksScreen> {
                   child: ListView.builder(
                     itemBuilder: (context, index) {
                       return TaskItemCard(
-                          task: taskListModel.taskList![index],
-                          onChangeStatus: () {
-                            getCancelledTaskList();
-                          },
-                          showProgress: (inProgress) {
-                            getCancelledTaskInProgress = inProgress;
-                            if (mounted) {
-                              setState(() {});
-                            }
-                          },
-                          countSummaryProgress: (countProgress) {});
+                        task: taskListModel.taskList![index],
+                        onChangeStatus: () {
+                          getCancelledTaskList();
+                        },
+                        showProgress: (inProgress) {
+                          getCancelledTaskInProgress = inProgress;
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        },
+                        countSummaryProgress: (countProgress) {},
+                        onDelete: () {
+                          getCancelledTaskList();
+                        },
+                      );
                     },
                     itemCount: taskListModel.taskList?.length,
                   ),

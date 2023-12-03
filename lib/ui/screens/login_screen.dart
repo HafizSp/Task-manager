@@ -165,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (response.isSuccess) {
-      AuthController.saveUserInformation(response.jsonResponse['token'],
+      await AuthController.saveUserInformation(response.jsonResponse['token'],
           UserModel.fromJson(response.jsonResponse['data']));
       if (mounted) {
         Navigator.push(
@@ -190,7 +190,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _emailTEController.dispose();
     _passwordTEController.dispose();

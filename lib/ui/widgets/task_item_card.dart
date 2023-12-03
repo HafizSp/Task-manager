@@ -13,10 +13,12 @@ class TaskItemCard extends StatefulWidget {
     required this.onChangeStatus,
     required this.showProgress,
     required this.countSummaryProgress,
+    required this.onDelete,
   });
 
   final Task task;
   final VoidCallback onChangeStatus;
+  final VoidCallback onDelete;
   final Function(bool) showProgress;
   final Function(bool) countSummaryProgress;
 
@@ -32,7 +34,7 @@ class _TaskItemCardState extends State<TaskItemCard> {
     final response = await NetworkCaller()
         .getRequest(Urls.deleteTask(widget.task.sId ?? ''));
     if (response.isSuccess) {
-      widget.onChangeStatus;
+      widget.onDelete();
     }
     widget.showProgress(false);
     widget.countSummaryProgress(false);

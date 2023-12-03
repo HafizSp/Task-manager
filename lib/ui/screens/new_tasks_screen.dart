@@ -129,6 +129,10 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
                           setState(() {});
                         }
                       },
+                      onDelete: () {
+                        getNewTaskList();
+                        getTaskCountSummary();
+                      },
                     ),
                     itemCount: taskListModel.taskList?.length ?? 0,
                   ),
@@ -144,7 +148,12 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddNewTaskScreen(),
+              builder: (context) => AddNewTaskScreen(
+                onAddTask: () {
+                  getNewTaskList();
+                  getTaskCountSummary();
+                },
+              ),
             ),
           );
         },

@@ -61,17 +61,21 @@ class _CompletedTasksScreenState extends State<CompletedTasksScreen> {
                   child: ListView.builder(
                     itemBuilder: (context, index) {
                       return TaskItemCard(
-                          task: taskListModel.taskList![index],
-                          onChangeStatus: () {
-                            getCompletedTaskList();
-                          },
-                          showProgress: (inProgress) {
-                            getCompletedTaskInProgress = inProgress;
-                            if (mounted) {
-                              setState(() {});
-                            }
-                          },
-                          countSummaryProgress: (countProgress) {});
+                        task: taskListModel.taskList![index],
+                        onChangeStatus: () {
+                          getCompletedTaskList();
+                        },
+                        showProgress: (inProgress) {
+                          getCompletedTaskInProgress = inProgress;
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        },
+                        countSummaryProgress: (countProgress) {},
+                        onDelete: () {
+                          getCompletedTaskList();
+                        },
+                      );
                     },
                     itemCount: taskListModel.taskList?.length,
                   ),

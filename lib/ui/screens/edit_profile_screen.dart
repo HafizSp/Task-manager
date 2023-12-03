@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:task_manager/data/models/user_model.dart';
 import 'package:task_manager/data/network/network_caller.dart';
 import 'package:task_manager/data/network/network_response.dart';
 import 'package:task_manager/ui/controllers/auth_controller.dart';
 import 'package:task_manager/ui/widgets/body_background.dart';
 import 'package:task_manager/ui/widgets/profile_summary_card.dart';
+import 'package:task_manager/ui/widgets/snack_message.dart';
 
 import '../../data/utility/urls.dart';
 
@@ -22,6 +27,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool updateProfileInProgress = false;
+
+  XFile? photo;
 
   @override
   void initState() {
@@ -93,9 +102,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: updateProfile,
-                            child: const Text("Update"),
+                          child: Visibility(
+                            visible: updateProfileInProgress == false,
+                            replacement: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            child: ElevatedButton(
+                              onPressed: updateProfile,
+                              child: const Text("Update"),
+                            ),
                           ),
                         )
                       ],
@@ -138,9 +153,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           Expanded(
             flex: 3,
-            child: Container(
-              padding: const EdgeInsets.only(left: 16),
-              child: const Text("Empty"),
+            child: InkWell(
+              onTap: () async {
+                final XFile? image = await ImagePicker()
+                    .pickImage(source: ImageSource.camera, imageQuality: 50);
+
+                if (image != null) {
+                  photo = image;
+                  if (mounted) {
+                    setState(() {});
+                  }
+                }
+              },
+              child: Visibility(
+                visible: photo == null,
+                replacement: Text(photo?.name ?? ''),
+                child: Container(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: const Text("Select a photo"),
+                ),
+              ),
             ),
           ),
         ],
@@ -152,7 +184,64 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    updateProfileInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    String? photoInBase64;
+    Map<String, dynamic> inputData = {
+      "email": _emailTEController.text.trim(),
+      "firstName": _firstNameTEController.text.trim(),
+      "lastName": _lastNameTEController.text.trim(),
+      "mobile": _mobileTEController.text.trim(),
+    };
+
+    if (_passwordTEController.text.isNotEmpty) {
+      inputData["password"] = _passwordTEController.text;
+    }
+
+    if (photo != null) {
+      List<int> imageBytes = await photo!.readAsBytes();
+      photoInBase64 = base64Encode(imageBytes);
+      inputData["photo"] = photoInBase64;
+    }
+
     final NetworkResponse response =
-        await NetworkCaller().postRequest(Urls.updateProfile);
+        await NetworkCaller().postRequest(Urls.updateProfile, body: inputData);
+
+    updateProfileInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+
+    if (response.isSuccess) {
+      AuthController.updateUserInformation(
+        UserModel(
+          email: _emailTEController.text.trim(),
+          firstName: _firstNameTEController.text.trim(),
+          lastName: _lastNameTEController.text.trim(),
+          mobile: _mobileTEController.text.trim(),
+          photo: photoInBase64 ?? AuthController.user?.photo,
+        ),
+      );
+
+      if (mounted) {
+        showSnackMessage(context, "Update profile success");
+      }
+    } else {
+      if (mounted) {
+        showSnackMessage(context, "Update profile failed");
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailTEController.dispose();
+    _firstNameTEController.dispose();
+    _lastNameTEController.dispose();
+    _mobileTEController.dispose();
+    _passwordTEController.dispose();
+    super.dispose();
   }
 }
