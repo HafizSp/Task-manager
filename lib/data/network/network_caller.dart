@@ -69,10 +69,12 @@ class NetworkCaller {
           'token': AuthController.token.toString(),
         },
       );
-      log(AuthController.token.toString());
+      // log(AuthController.token.toString());
       log(response.body.toString());
       log(response.headers.toString());
       log(response.statusCode.toString());
+      var data = jsonDecode(response.body);
+      log(data['status']);
 
       if (response.statusCode == 200) {
         return NetworkResponse(

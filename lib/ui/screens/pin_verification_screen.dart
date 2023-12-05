@@ -4,14 +4,24 @@ import 'package:task_manager/ui/screens/login_screen.dart';
 import 'package:task_manager/ui/screens/reset_password_screen.dart';
 import 'package:task_manager/ui/widgets/body_background.dart';
 
+import '../../data/network/network_caller.dart';
+import '../../data/network/network_response.dart';
+import '../../data/utility/urls.dart';
+import '../widgets/snack_message.dart';
+
 class PinVerificationScreen extends StatefulWidget {
-  const PinVerificationScreen({super.key});
+  const PinVerificationScreen({super.key, required this.email});
+
+  final String email;
 
   @override
   State<PinVerificationScreen> createState() => _PinVerificationScreenState();
 }
 
 class _PinVerificationScreenState extends State<PinVerificationScreen> {
+  bool verifyOTPInProgress = false;
+  String? PIN;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +53,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                         length: 6,
                         obscureText: false,
                         animationType: AnimationType.fade,
+                        keyboardType: TextInputType.number,
                         pinTheme: PinTheme(
                           shape: PinCodeFieldShape.box,
                           borderRadius: BorderRadius.circular(5),
@@ -58,7 +69,9 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                         onCompleted: (v) {
                           print("Completed");
                         },
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          PIN = value;
+                        },
                         beforeTextPaste: (text) {
                           return true;
                         },
@@ -67,17 +80,15 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ResetPasswordScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text('Verify'),
+                        child: Visibility(
+                          visible: verifyOTPInProgress == false,
+                          replacement: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: verifyPIN,
+                            child: const Text('Verify'),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 48),
@@ -116,5 +127,48 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> verifyPIN() async {
+    if (PIN?.trim() != null) {
+      verifyOTPInProgress = true;
+      if (mounted) {
+        setState(() {});
+      }
+
+      final NetworkResponse response = await NetworkCaller()
+          .getRequest(Urls.verifyOTP(widget.email, PIN!.trim()));
+
+      verifyOTPInProgress = false;
+      if (mounted) {
+        setState(() {});
+      }
+
+      if (response.isSuccess && response.jsonResponse["status"] == "success") {
+        if (mounted) {
+          showSnackMessage(context, "Pin verified");
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResetPasswordScreen(
+                email: widget.email,
+                pin: PIN!,
+              ),
+            ),
+          );
+        }
+      } else {
+        if (response.statusCode == 401) {
+          if (mounted) {
+            showSnackMessage(context, "Pin is not correct");
+          }
+        } else {
+          if (mounted) {
+            showSnackMessage(context, "Invalid try again");
+          }
+        }
+      }
+    }
   }
 }
