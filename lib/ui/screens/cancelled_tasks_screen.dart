@@ -75,6 +75,7 @@ class _CancelledTasksScreenState extends State<CancelledTasksScreen> {
                         onDelete: () {
                           getCancelledTaskList();
                         },
+                        clipColor: Colors.red,
                       );
                     },
                     itemCount: taskListModel.taskList?.length,

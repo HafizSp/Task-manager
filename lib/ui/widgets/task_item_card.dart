@@ -14,11 +14,14 @@ class TaskItemCard extends StatefulWidget {
     required this.showProgress,
     required this.countSummaryProgress,
     required this.onDelete,
+    required this.clipColor,
   });
 
   final Task task;
   final VoidCallback onChangeStatus;
   final VoidCallback onDelete;
+  final MaterialColor clipColor;
+
   final Function(bool) showProgress;
   final Function(bool) countSummaryProgress;
 
@@ -63,12 +66,16 @@ class _TaskItemCardState extends State<TaskItemCard> {
           children: [
             Text(
               widget.task.title ?? '',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
             ),
             Text(
               widget.task.description ?? '',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
-            Text("Data: ${widget.task.createdDate}"),
+            Text(
+              "Data: ${widget.task.createdDate}",
+              style: const TextStyle(fontWeight: FontWeight.w300),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -77,17 +84,44 @@ class _TaskItemCardState extends State<TaskItemCard> {
                     widget.task.status ?? 'New',
                     style: const TextStyle(color: Colors.white),
                   ),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: widget.clipColor,
                 ),
                 Wrap(
                   children: [
                     IconButton(
-                      onPressed: deleteTask,
-                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                  "Do you really want to delete the task?",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                actions: [
+                                  TextButton(
+                                      onPressed: deleteTask,
+                                      child: const Text("Yes")),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("No"))
+                                ],
+                              );
+                            });
+                      },
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.redAccent,
+                      ),
                     ),
                     IconButton(
                       onPressed: showUpdateStatusModal,
-                      icon: const Icon(Icons.edit_calendar_outlined),
+                      icon: const Icon(
+                        Icons.edit_note_outlined,
+                        color: Colors.green,
+                      ),
                     ),
                   ],
                 )

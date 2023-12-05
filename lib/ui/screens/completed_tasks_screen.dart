@@ -75,6 +75,7 @@ class _CompletedTasksScreenState extends State<CompletedTasksScreen> {
                         onDelete: () {
                           getCompletedTaskList();
                         },
+                        clipColor: Colors.green,
                       );
                     },
                     itemCount: taskListModel.taskList?.length,

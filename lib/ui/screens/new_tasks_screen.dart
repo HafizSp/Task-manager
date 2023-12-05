@@ -133,6 +133,7 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
                         getNewTaskList();
                         getTaskCountSummary();
                       },
+                      clipColor: Colors.blue,
                     ),
                     itemCount: taskListModel.taskList?.length ?? 0,
                   ),

@@ -74,6 +74,7 @@ class _InProgressTasksScreenState extends State<InProgressTasksScreen> {
                       onDelete: () {
                         getProgressTaskList();
                       },
+                      clipColor: Colors.lightGreen,
                     ),
                     itemCount: taskListModel.taskList?.length ?? 0,
                   ),
